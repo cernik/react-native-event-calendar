@@ -21,6 +21,11 @@ const TEXT_LINE_HEIGHT = 17
 function range (from, to) {
   return Array.from(Array(to), (_, i) => from + i)
 }
+function pad(num, size) {
+  var s = num+"";
+  while (s.length < size) s = "0" + s;
+  return s;
+}
 
 export default class DayView extends React.PureComponent {
   constructor (props) {
@@ -90,7 +95,7 @@ export default class DayView extends React.PureComponent {
           key={`timeLabel${i}`}
           style={[styles.timeLabel, { top: offset * i - 6 }]}
         >
-          {timeText}
+          {format24h ? pad(timeText, 2) + ':00' : timeText}
         </Text>,
         i === 0 ? null : (
           <View
