@@ -1,7 +1,7 @@
 // @flow
 import { StyleSheet } from 'react-native'
 
-const calendarHeight = 2400
+const calendarHeight = 1200
 // const eventPaddingLeft = 4
 const leftMargin = 50 - 1
 
@@ -44,14 +44,14 @@ export default function styleConstructor (
       opacity: 0.8,
       borderColor: '#DDE5FD',
       borderWidth: 1,
-      borderRadius: 5,
-      paddingLeft: 4,
+      // borderRadius: 5,
+      // paddingLeft: 4,
       minHeight: 25,
       flex: 1,
-      paddingTop: 5,
-      paddingBottom: 0,
+      // paddingTop: 5,
+      paddingBottom: 1,
       flexDirection: 'column',
-      alignItems: 'flex-start',
+      // alignItems: 'flex-start',
       overflow: 'hidden',
       ...theme.event
     },
