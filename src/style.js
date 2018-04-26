@@ -30,6 +30,10 @@ export default function styleConstructor (
       alignItems: 'center',
       ...theme.header
     },
+    componentHeader: {
+      height: 50,
+      ...theme.componentHeader
+    },
     headerText: {
       fontSize: 16
     },
@@ -44,14 +48,10 @@ export default function styleConstructor (
       opacity: 0.8,
       borderColor: '#DDE5FD',
       borderWidth: 1,
-      // borderRadius: 5,
-      // paddingLeft: 4,
       minHeight: 25,
       flex: 1,
-      // paddingTop: 5,
       paddingBottom: 1,
       flexDirection: 'column',
-      // alignItems: 'flex-start',
       overflow: 'hidden',
       ...theme.event
     },
