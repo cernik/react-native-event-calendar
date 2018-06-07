@@ -22,6 +22,10 @@ export default class EventCalendar extends React.Component {
       date: moment(this.props.initDate),
       index: this.props.size
     }
+
+    this._getItem = this._getItem.bind(this);
+    this._getItemLayout = this._getItemLayout.bind(this);
+    this._renderItem = this._renderItem.bind(this);
   }
 
   static defaultProps = {
@@ -118,12 +122,12 @@ export default class EventCalendar extends React.Component {
           initialScrollIndex={this.props.size}
           data={events}
           getItemCount={() => this.props.size * 2}
-          getItem={this._getItem.bind(this)}
+          getItem={this._getItem}
           keyExtractor={(item, index) => index}
-          getItemLayout={this._getItemLayout.bind(this)}
+          getItemLayout={this._getItemLayout}
           horizontal
           pagingEnabled
-          renderItem={this._renderItem.bind(this)}
+          renderItem={this._renderItem}
           style={{ width: width }}
           onMomentumScrollEnd={(event) => {
             const index = parseInt(event.nativeEvent.contentOffset.x / width)
