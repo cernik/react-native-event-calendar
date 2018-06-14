@@ -38,6 +38,7 @@ export default class DayView extends React.PureComponent {
       _scrollY: initPosition,
       packedEvents
     }
+    this.onPressDayView = this.onPressDayView.bind(this);
   }
 
   componentWillReceiveProps (nextProps) {
@@ -54,21 +55,21 @@ export default class DayView extends React.PureComponent {
   scrollToFirst () {
     setTimeout(() => {
       if (this.state && this.state._scrollY && this._scrollView) {
-        this._scrollView.scrollTo({ x: 0, y: this.state._scrollY, animated: false })
+        this._scrollView.scrollTo({ x: 0, y: this.state._scrollY, animated: true })
       }
     }, 1)
   }
 
   _renderRedLine() {
-    const offset = CALENDER_HEIGHT / 24
-    const { format24h } = this.props
-    const { width, styles } = this.props
-    const timeNowHour = moment().hour()
-    const timeNowMin = moment().minutes()
-    return (
-      <View key={`timeNow`}
-        style={[styles.lineNow, { top: offset * timeNowHour + offset * timeNowMin / 60, width: width - 20 }]}
-      />
+      const offset = CALENDER_HEIGHT / 24
+      const { format24h } = this.props
+      const { width, styles } = this.props
+      const timeNowHour = moment().hour()
+      const timeNowMin = moment().minutes()
+      return (
+          <View key={`timeNow`}
+            style={[styles.lineNow, { top: offset * timeNowHour + offset * timeNowMin / 60, width: width - 20 }]}
+          />
     )
   }
 
@@ -177,15 +178,26 @@ export default class DayView extends React.PureComponent {
     )
   }
 
+  onPressDayView(e) {
+    const offsetTop = e.nativeEvent.locationY;
+    const section = offsetTop * 24 / CALENDER_HEIGHT;
+    const hour = Math.floor(section);
+    if (this.props.onSelectHour) {
+      this.props.onSelectHour(hour);
+    }
+  }
+
   render () {
     const { styles } = this.props
     return (
       <ScrollView ref={ref => (this._scrollView = ref)}
         contentContainerStyle={[styles.contentStyle, { width: this.props.width }]}
       >
-        {this._renderLines()}
-        {this._renderEvents()}
-        {this._renderRedLine()}
+        <TouchableOpacity activeOpacity={1} style={{ flex: 1 }} onLongPress={this.onPressDayView}>
+          {this._renderLines()}
+          {this._renderEvents()}
+          {this._renderRedLine()}
+        </TouchableOpacity>
       </ScrollView>
     )
   }
