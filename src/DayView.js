@@ -12,7 +12,7 @@ import _ from 'lodash'
 
 const LEFT_MARGIN = 60 - 1
 // const RIGHT_MARGIN = 10
-const CALENDER_HEIGHT = 2400
+const CALENDER_HEIGHT = 1200
 // const EVENT_TITLE_HEIGHT = 15
 const TEXT_LINE_HEIGHT = 17
 // const MIN_EVENT_TITLE_WIDTH = 20
@@ -20,6 +20,11 @@ const TEXT_LINE_HEIGHT = 17
 
 function range (from, to) {
   return Array.from(Array(to), (_, i) => from + i)
+}
+function pad(num, size) {
+  var s = num+"";
+  while (s.length < size) s = "0" + s;
+  return s;
 }
 
 export default class DayView extends React.PureComponent {
@@ -33,6 +38,7 @@ export default class DayView extends React.PureComponent {
       _scrollY: initPosition,
       packedEvents
     }
+    this.onPressDayView = this.onPressDayView.bind(this);
   }
 
   componentWillReceiveProps (nextProps) {
@@ -90,7 +96,7 @@ export default class DayView extends React.PureComponent {
           key={`timeLabel${i}`}
           style={[styles.timeLabel, { top: offset * i - 6 }]}
         >
-          {timeText}
+          {format24h ? pad(timeText, 2) + ':00' : timeText}
         </Text>,
         i === 0 ? null : (
           <View
@@ -172,15 +178,26 @@ export default class DayView extends React.PureComponent {
     )
   }
 
+  onPressDayView(e) {
+    const offsetTop = e.nativeEvent.locationY;
+    const section = offsetTop * 24 / CALENDER_HEIGHT;
+    const hour = Math.floor(section);
+    if (this.props.onSelectHour) {
+      this.props.onSelectHour(hour);
+    }
+  }
+
   render () {
     const { styles } = this.props
     return (
       <ScrollView ref={ref => (this._scrollView = ref)}
         contentContainerStyle={[styles.contentStyle, { width: this.props.width }]}
       >
-        {this._renderLines()}
-        {this._renderEvents()}
-        {this._renderRedLine()}
+        <TouchableOpacity activeOpacity={1} style={{ flex: 1 }} onLongPress={this.onPressDayView}>
+          {this._renderLines()}
+          {this._renderEvents()}
+          {this._renderRedLine()}
+        </TouchableOpacity>
       </ScrollView>
     )
   }

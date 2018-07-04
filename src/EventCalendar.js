@@ -56,6 +56,7 @@ export default class EventCalendar extends React.Component {
         headerStyle={this.props.headerStyle}
         renderEvent={this.props.renderEvent}
         eventTapped={this.props.eventTapped}
+        onSelectHour={this.props.onSelectHour}
         events={item}
         width={width}
         styles={this.styles}
@@ -70,7 +71,19 @@ export default class EventCalendar extends React.Component {
     }
     const date = moment(this.props.initDate).add(index - this.props.size, 'days')
     this.refs.calendar.scrollToIndex({ index, animated: false })
-    this.setState({ index, date })
+    this.setState({ index, date });
+    if (this.props.onChangeDate) {
+      this.props.onChangeDate(date);
+    }
+  }
+
+  _goToDate(date) {
+    const oldDate = this.state.date.set({ hour: 12, minute: 0, second: 0, millisecond: 0 });
+    const newDate = date.set({ hour: 12, minute: 0, second: 0, millisecond: 0 });
+    const days = newDate.diff(oldDate, 'days');
+    const index = this.state.index + days;
+    this.refs.calendar.scrollToIndex({ index, animated: false })
+    this.setState({ index, date });
   }
 
   render() {
@@ -80,18 +93,25 @@ export default class EventCalendar extends React.Component {
       events,
       initDate,
       formatHeader
-    } = this.props
+    } = this.props;
     return (
       <View style={[this.styles.container, { width }]}>
-        <View style={this.styles.header}>
-          <TouchableOpacity onPress={() => this._goToPage(this.state.index - 1)}>
-            <Image source={require('./back.png')} style={this.styles.arrow} />
-          </TouchableOpacity>
-          <Text style={this.styles.headerText}>{this.state.date.format(formatHeader || 'DD MMMM YYYY')}</Text>
-          <TouchableOpacity onPress={() => this._goToPage(this.state.index + 1)}>
-            <Image source={require('./forward.png')} style={this.styles.arrow} />
-          </TouchableOpacity>
-        </View>
+        {this.props.headerComponent && (
+          <View style={this.styles.componentHeader}>
+            {this.props.headerComponent}
+          </View>
+        ) || (
+          <View style={this.styles.header}>
+            <TouchableOpacity onPress={() => this._goToPage(this.state.index - 1)}>
+              <Image source={require('./back.png')} style={this.styles.arrow} />
+            </TouchableOpacity>
+            <Text style={this.styles.headerText}>{this.state.date.format(formatHeader || 'DD MMMM YYYY')}</Text>
+            <TouchableOpacity onPress={() => this._goToPage(this.state.index + 1)}>
+              <Image source={require('./forward.png')} style={this.styles.arrow} />
+            </TouchableOpacity>
+          </View>
+        )}
+
         <VirtualizedList
           ref='calendar'
           windowSize={2}
@@ -109,7 +129,10 @@ export default class EventCalendar extends React.Component {
           onMomentumScrollEnd={(event) => {
             const index = parseInt(event.nativeEvent.contentOffset.x / width)
             const date = moment(this.props.initDate).add(index - this.props.size, 'days')
-            this.setState({ index, date })
+            this.setState({ index, date });
+            if (this.props.onChangeDate) {
+              this.props.onChangeDate(date);
+            }
           }}
           {...virtualizedListProps}
         />
